@@ -15,6 +15,6 @@ public interface UserDao {
     public List<User> getUsers();
     public void deleteUser(int id);
     public void saveUser(User u);
-    public boolean verificarEmailPassword(User u);
+    public User getUserByEmailAndPassword(User u);
     public User getUser(int id);
 }

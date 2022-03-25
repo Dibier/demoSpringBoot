@@ -7,27 +7,43 @@
 window.onload = function(){
     cargarUsuarios();
     botonAgregar();
+    saludarUser();
 };
 
+function saludarUser() {
+    document.querySelector('#user').innerHTML = localStorage.email;
+}
+
+function getHeaders() {
+    return {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': localStorage.token
+    };
+}
+
+function getHeaders2() {
+    return {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'//,
+        //'Authorization': localStorage.token
+    };
+}
  async function cargarUsuarios() {
     const res = await fetch('api/users', {
         method:'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }  
-        
+        headers: getHeaders()
     });
     const users = await res.json();
+    console.log(users);
     tbHTML = '';
     for (user of users) {
         tbHTML += '<tr>';
         tbHTML += '<td>'+user.id+'</td>';
         tbHTML += '<td>'+user.nombre+'</td>';
         tbHTML += '<td>'+user.apellido+'</td>';
-        tbHTML += '<td>'+user.email+'</td>';
         tbHTML += '<td>'+user.telefono+'</td>';
-        tbHTML += '<td>'+user.password+'</td>';
+        tbHTML += '<td>'+user.email+'</td>';
         tbHTML += '<td><input onclick="eliminar('+user.id+')" type="button" value="&#128465" /></td>';
         tbHTML += '<td><input onclick="editar('+user.id+')" type="button" value="&#128393" /></td>';
         tbHTML += '</tr>';
@@ -46,10 +62,7 @@ function botonAgregar() {
 async function eliminar(id) {
     const res = await fetch('api/delete/'+id, {
         method:'DELETE',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
+        headers: getHeaders()
     });
     
     cargarUsuarios();
@@ -75,10 +88,7 @@ async function guardar(id) {
     
     const res = await fetch(url, {
         method: metodo,
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
+        headers: getHeaders2(),
         body: json
     });
     
@@ -128,10 +138,7 @@ async function editar(id) {
 async function cargarUsuario(id) {
     const res = await fetch('api/user/'+id, {
         method:'GET',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }  
+        headers: getHeaders2() 
         
     });
     const user= await res.json();
@@ -140,7 +147,7 @@ async function cargarUsuario(id) {
     document.querySelector('#apellido').value = user.apellido;
     document.querySelector('#telefono').value = user.telefono;
     document.querySelector('#email').value = user.email;
-    document.querySelector('#password').value = user.password;
+    document.querySelector('#password').value = '';
     
 };
 

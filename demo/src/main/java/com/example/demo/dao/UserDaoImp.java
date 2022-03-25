@@ -5,6 +5,8 @@
 package com.example.demo.dao;
 
 import com.example.demo.model.User;
+import de.mkammerer.argon2.Argon2;
+import de.mkammerer.argon2.Argon2Factory;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -40,14 +42,20 @@ public class UserDaoImp implements UserDao {
     }
     
     @Override
-    public boolean verificarEmailPassword(User u) {
-        String query = "FROM User WHERE email = :email AND password = :password";
+    public User getUserByEmailAndPassword(User u) {
+        String query = "FROM User WHERE email = :email";
         List<User> users = en.createQuery(query)
                 .setParameter("email", u.getEmail())
-                .setParameter("password", u.getPassword())
                 .getResultList();
-        
-        return !users.isEmpty();
+        if (users.isEmpty()) {
+            return null;
+        }
+        String passwordHashed = users.get(0).getPassword();
+        Argon2 argon2 = Argon2Factory.create(Argon2Factory.Argon2Types.ARGON2id);
+        if(argon2.verify(passwordHashed, u.getPassword())) {
+            return u;
+        }
+        return null;
     }
 
     @Override

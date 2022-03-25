@@ -26,8 +26,11 @@ async function login() {
 
         const respuesta = await request.text();
 
-        if (respuesta == 'Ok') {
+        if (respuesta != 'Fail') {
+            localStorage.token = respuesta;
+            localStorage.email = datos.email;
              window.location.href ='admin.html';
+             
         } else {
             alert("Datos incorrectos.");
         }
